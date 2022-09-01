@@ -10,9 +10,14 @@ class MoviesList extends React.Component {
   };
 
   getDescrMovie = (id) => {
-    fetch(`http://www.omdbapi.com/?apikey=8d34edf&i=${id}`)
+    fetch(`https://www.omdbapi.com/?apikey=8d34edf&i=${id}`)
       .then((res) => res.json())
-      .then((data) => this.setState({ open: true, descrMovie: data }));
+      .then((data) => this.setState({ open: true, descrMovie: data })
+      )
+      .catch((err) => {
+        console.error(err)
+        this.setState({loading: false})
+      })
   };
 
   closeModal = () => {

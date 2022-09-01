@@ -18,21 +18,31 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://www.omdbapi.com/?apikey=8d34edf&s=terminator&page=1")
+    fetch("https://www.omdbapi.com/?apikey=8d34edf&s=terminator&page=1")
       .then((res) => res.json())
-      .then((data) => this.setState({ movies: data.Search, loading: false }));
+      .then((data) => this.setState({ movies: data.Search, loading: false })
+      )
+      .catch((err) => {
+        console.error(err)
+        this.setState({loading: false})
+      })
   }
 
   searchMuvies = (value, type = "all") => {
     if (!value) return;
     this.setState({ loading: true });
     fetch(
-      `http://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=1${
+      `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=1${
         type !== "all" ? `&type=${type}` : ""
       }`
     )
       .then((res) => res.json())
-      .then((data) => this.setState({ movies: data.Search, loading: false }));
+      .then((data) => this.setState({ movies: data.Search, loading: false })
+      )
+      .catch((err) => {
+        console.error(err)
+        this.setState({loading: false})
+      })
 
     this.movieName = value;
     this.movieType = type;
@@ -44,7 +54,7 @@ class Main extends React.Component {
     if (!value) return;
     this.setState({ loading: true });
     fetch(
-      `http://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=${
+      `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=${
         this.state.page
       }&${type !== "all" ? `&type=${type}` : ""}`
     )
@@ -56,7 +66,11 @@ class Main extends React.Component {
             loading: false,
           };
         })
-      );
+      )
+      .catch((err) => {
+        console.error(err)
+        this.setState({loading: false})
+      })
 
     this.setState({ page: +this.state.page + 1 });
     
