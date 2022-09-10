@@ -8,9 +8,9 @@ class Main extends React.Component {
     super(props);
 
     this.state = {
+      page: 1,
       movies: [],
       loading: true,
-      page: 2,
       amountMovie: 0,
     };
     let movieName;
@@ -30,6 +30,7 @@ class Main extends React.Component {
   searchMuvies = (value, type = "all") => {
     if (!value) return;
     this.setState({ loading: true });
+
     fetch(
       `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=1${
         type !== "all" ? `&type=${type}` : ""
@@ -42,39 +43,50 @@ class Main extends React.Component {
           loading: false,
           amountMovie: data.totalResults,
         })
-      )
-      .catch((err) => {
-        console.error(err);
-        this.setState({ loading: false });
-      });
+      );
 
     this.movieName = value;
     this.movieType = type;
   };
 
-  loadMore = (value, type) => {
-    if (!value) return;
+  nextPage = (value, type) => {
+    this.setState({ page: +this.state.page + 1 });
     this.setState({ loading: true });
+
     fetch(
-      `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=${this.state.page}${
-        type !== "all" ? `&type=${type}` : ""
-      }`
+      `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=${
+        this.state.page + 1
+      }${type !== "all" ? `&type=${type}` : ""}`
     )
       .then((res) => res.json())
       .then((data) =>
-        this.setState(({ movies }) => {
+        this.setState((movies) => {
           return {
-            movies: movies.concat(data.Search),
+            movies: data.Search,
             loading: false,
           };
         })
-      )
-      .catch((err) => {
-        console.error(err);
-        this.setState({ loading: false });
-      });
+      );
+  };
 
-    this.setState({ page: +this.state.page + 1 });
+  prevPage = (value, type) => {
+    this.setState({ page: +this.state.page - 1 });
+    this.setState({ loading: true });
+
+    fetch(
+      `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=${
+        this.state.page - 1
+      }${type !== "all" ? `&type=${type}` : ""}`
+    )
+      .then((res) => res.json())
+      .then((data) =>
+        this.setState((movies) => {
+          return {
+            movies: data.Search,
+            loading: false,
+          };
+        })
+      );
   };
 
   render() {
@@ -85,21 +97,32 @@ class Main extends React.Component {
 
         {loading ? <Spiner /> : <MoviesList movies={movies} />}
 
-        <button
-          className="btn waves-effect waves-light load"
-          type="submit"
-          name="action"
-          onClick={() => this.loadMore(this.movieName, this.movieType)}
-          disabled={
-            !this.movieName ||
-            !this.state.movies ||
-            +this.state.amountMovie === this.state.movies.length
-              ? true
-              : false
-          }
-        >
-          load More
-        </button>
+        <div className="navigation">
+          <button
+            className="prev btn"
+            onClick={() => this.prevPage(this.movieName, this.movieType)}
+            disabled={
+              !this.movieName || !this.state.movies || this.state.page === 1
+                ? true
+                : false
+            }
+          >
+            Prev page
+          </button>
+          <button
+            className="next btn"
+            onClick={() => this.nextPage(this.movieName, this.movieType)}
+            disabled={
+              !this.movieName ||
+              !this.state.movies ||
+              +this.state.amountMovie === this.state.movies.length
+                ? true
+                : false
+            }
+          >
+            Next page
+          </button>
+        </div>
       </main>
     );
   }
