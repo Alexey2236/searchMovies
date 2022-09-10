@@ -35,8 +35,9 @@ nav {
 }
 
 .movie-item{
-  height: 400px;
+  max-height: 400px;
 }
+
 
 .search-btn{
   position: absolute;
@@ -50,7 +51,7 @@ nav {
 
 .movie-descr-wrapper{
     background-color: rgb(249, 240, 170);
-    width: 700px;
+    max-width: 700px;
     z-index:  1000;
     padding: 10px 25px 25px 25px ;
     box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.2);
@@ -103,4 +104,60 @@ display: inline-block;
   border-radius: 5px
 }
 
+@media (max-width: 768px) {
+
+  .movie-descr-wrapper{
+    width: 500px;
+    margin-left: -250px;
+    margin-top: -320px;
+    padding: 5px 5px;
+}
+.poster{
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+}
+.title{
+  font-size: 25px
+}
+
+.descr-wrapper{
+  display: flex;
+  flex-direction: column;
+}
+.text{
+  margin-left: 5px;
+}
+
+p{
+  font-size: 13px;
+}
+
+.material-icons{
+  margin-left: 93%;
+  margin-top: 2px;
+}
+}
+
+@media (max-width: 426px) {
+
+  .movies {
+    display: grid;
+    grid-template-columns: repeat(2, 3fr);
+    grid-gap: 20px;
+  }
+  .movie-descr-wrapper{
+    width: 370px;
+    margin-left: -185px;
+    margin-top: -320px;
+    padding: 5px 5px;
+}
+
+.card-content{
+  margin: -10px;
+}
+.card .card-title{
+  font-size: 18px;
+}
+}
 

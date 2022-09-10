@@ -3,7 +3,6 @@ import { MoviesList } from "../components/MoviesList";
 import { Spiner } from "../components/Spiner";
 import { Search } from "./Search";
 
-
 class Main extends React.Component {
   constructor(props) {
     super(props);
@@ -12,6 +11,7 @@ class Main extends React.Component {
       movies: [],
       loading: true,
       page: 2,
+      amountMovie: 0,
     };
     let movieName;
     let movieType;
@@ -20,12 +20,11 @@ class Main extends React.Component {
   componentDidMount() {
     fetch("https://www.omdbapi.com/?apikey=8d34edf&s=terminator&page=1")
       .then((res) => res.json())
-      .then((data) => this.setState({ movies: data.Search, loading: false })
-      )
+      .then((data) => this.setState({ movies: data.Search, loading: false }))
       .catch((err) => {
-        console.error(err)
-        this.setState({loading: false})
-      })
+        console.error(err);
+        this.setState({ loading: false });
+      });
   }
 
   searchMuvies = (value, type = "all") => {
@@ -37,26 +36,29 @@ class Main extends React.Component {
       }`
     )
       .then((res) => res.json())
-      .then((data) => this.setState({ movies: data.Search, loading: false })
+      .then((data) =>
+        this.setState({
+          movies: data.Search,
+          loading: false,
+          amountMovie: data.totalResults,
+        })
       )
       .catch((err) => {
-        console.error(err)
-        this.setState({loading: false})
-      })
+        console.error(err);
+        this.setState({ loading: false });
+      });
 
     this.movieName = value;
     this.movieType = type;
   };
 
-
-
-  loadMore = (value, type = "all") => {
+  loadMore = (value, type) => {
     if (!value) return;
     this.setState({ loading: true });
     fetch(
-      `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=${
-        this.state.page
-      }&${type !== "all" ? `&type=${type}` : ""}`
+      `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=${this.state.page}${
+        type !== "all" ? `&type=${type}` : ""
+      }`
     )
       .then((res) => res.json())
       .then((data) =>
@@ -68,19 +70,18 @@ class Main extends React.Component {
         })
       )
       .catch((err) => {
-        console.error(err)
-        this.setState({loading: false})
-      })
+        console.error(err);
+        this.setState({ loading: false });
+      });
 
     this.setState({ page: +this.state.page + 1 });
-    
   };
 
   render() {
     const { movies, loading } = this.state;
     return (
       <main className="content container">
-        <Search searchMuvies={this.searchMuvies}/>
+        <Search searchMuvies={this.searchMuvies} />
 
         {loading ? <Spiner /> : <MoviesList movies={movies} />}
 
@@ -89,11 +90,16 @@ class Main extends React.Component {
           type="submit"
           name="action"
           onClick={() => this.loadMore(this.movieName, this.movieType)}
-          disabled={!this.movieName || !this.state.movies ? true : false}
+          disabled={
+            !this.movieName ||
+            !this.state.movies ||
+            +this.state.amountMovie === this.state.movies.length
+              ? true
+              : false
+          }
         >
           load More
         </button>
-
       </main>
     );
   }
