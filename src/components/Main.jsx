@@ -30,6 +30,7 @@ class Main extends React.Component {
   searchMuvies = (value, type = "all") => {
     if (!value) return;
     this.setState({ loading: true });
+    this.setState({page : 1})
 
     fetch(
       `https://www.omdbapi.com/?apikey=8d34edf&s=${value}&page=1${
@@ -41,7 +42,7 @@ class Main extends React.Component {
         this.setState({
           movies: data.Search,
           loading: false,
-          amountMovie: data.totalResults,
+          amountMovie: data.totalResults, 
         })
       );
 
@@ -115,7 +116,7 @@ class Main extends React.Component {
             disabled={
               !this.movieName ||
               !this.state.movies ||
-              +this.state.amountMovie === this.state.movies.length
+              +this.state.page === Math.ceil(+this.state.amountMovie / 10)
                 ? true
                 : false
             }
